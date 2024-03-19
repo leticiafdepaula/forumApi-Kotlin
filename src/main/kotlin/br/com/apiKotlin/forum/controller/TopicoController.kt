@@ -3,6 +3,7 @@ package br.com.apiKotlin.forum.controller
 import br.com.apiKotlin.forum.dto.AtualizacaoTopicoForm
 import br.com.apiKotlin.forum.service.TopicoService
 import jakarta.validation.Valid
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,4 +35,8 @@ class TopicoController (private val service: TopicoService){
          service.atualizar(form)
     }
 
+    @DeleteMapping("/{id}")
+    fun deletar(@PathVariable id: Long) {
+      service.deletar(id)
+    }
 }
