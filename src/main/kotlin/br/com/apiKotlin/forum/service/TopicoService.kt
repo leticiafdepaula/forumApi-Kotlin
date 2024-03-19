@@ -3,18 +3,21 @@ package br.com.apiKotlin.forum.service
 import br.com.apiKotlin.forum.controller.NovoTopicoForm
 import br.com.apiKotlin.forum.controller.TopicoView
 import br.com.apiKotlin.forum.dto.AtualizacaoTopicoForm
+import br.com.apiKotlin.forum.exception.NotFoundException
 import br.com.apiKotlin.forum.mapper.TopicoFormMapper
 import br.com.apiKotlin.forum.mapper.TopicoViewMapper
 import br.com.apiKotlin.forum.model.Topico
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
+import javax.annotation.processing.Messager
 import kotlin.collections.ArrayList
 
 @Service
 class TopicoService (
         private var topicos: List<Topico> = ArrayList(),
         private val topicoViewMapper: TopicoViewMapper,
-        private val topicoformMapper: TopicoFormMapper
+        private val topicoformMapper: TopicoFormMapper,
+       private val notFoundMessage: String = "Topico não encontrado!"
         ) {
 
     fun listar(): List<TopicoView> {
@@ -58,7 +61,7 @@ class TopicoService (
     fun deletar(id: Long) {
         val topico = topicos.stream().filter { t ->
             t.id == id
-        }.findFirst().get()
+        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
         topicos = topicos.minus(topico)
     }
 }
