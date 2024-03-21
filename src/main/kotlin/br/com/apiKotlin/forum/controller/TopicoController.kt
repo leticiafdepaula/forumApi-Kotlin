@@ -5,6 +5,7 @@ import br.com.apiKotlin.forum.service.TopicoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -28,7 +29,9 @@ class TopicoController (private val service: TopicoService){
     fun buscarPorId(@PathVariable id: Long): TopicoView {
               return service.buscarPorId(id)
     }
+
     @PostMapping
+    @Transactional
     fun cadastrar(
             @RequestBody @Valid form: NovoTopicoForm,
             uriBuilder: UriComponentsBuilder
@@ -39,6 +42,7 @@ class TopicoController (private val service: TopicoService){
     }
 
     @PutMapping
+    @Transactional
     fun atualizar(@RequestBody @Valid form: AtualizacaoTopicoForm): ResponseEntity<TopicoView> {
         val topicoView = service.atualizar(form)
            return ResponseEntity.ok(topicoView)
@@ -46,6 +50,7 @@ class TopicoController (private val service: TopicoService){
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     fun deletar(@PathVariable id: Long) {
       service.deletar(id)
     }
