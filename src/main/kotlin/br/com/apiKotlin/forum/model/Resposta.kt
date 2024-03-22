@@ -13,10 +13,9 @@ data class Resposta (
         val id: Long,
         val mensagem: String,
         val dataCriacao: LocalDateTime = LocalDateTime.now(),
-        @ManyToOne
         val autor: Usuario,
         @ManyToOne
         val topico: Topico,
-        val solucao: Boolean,
+        val solucao: Boolean
 )
 
