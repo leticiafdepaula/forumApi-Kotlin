@@ -6,12 +6,9 @@ import br.com.apiKotlin.forum.dto.AtualizacaoTopicoForm
 import br.com.apiKotlin.forum.exception.NotFoundException
 import br.com.apiKotlin.forum.mapper.TopicoFormMapper
 import br.com.apiKotlin.forum.mapper.TopicoViewMapper
-import br.com.apiKotlin.forum.model.Topico
 import br.com.apiKotlin.forum.repository.TopicoRepository
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
-import javax.annotation.processing.Messager
-import kotlin.collections.ArrayList
 
 @Service
 class TopicoService (
@@ -21,9 +18,14 @@ class TopicoService (
        private val notFoundMessage: String = "Topico não encontrado!"
         ) {
 
-    fun listar(): List<TopicoView> {
-        return repository.findAll().stream().map {
-            t -> topicoViewMapper.map(t)
+    fun listar(nomeCurso: String?): List<TopicoView> {
+        val topicos = if ( nomeCurso == null) {
+            repository.findAll()
+        } else {
+            repository.findByCursoNome(nomeCurso)
+        }
+        return topicos.stream().map { t ->
+            topicoViewMapper.map(t)
          }.collect(Collectors.toList())
     }
 
