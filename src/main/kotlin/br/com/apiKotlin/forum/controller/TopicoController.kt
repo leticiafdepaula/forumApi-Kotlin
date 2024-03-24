@@ -3,6 +3,7 @@ package br.com.apiKotlin.forum.controller
 import br.com.apiKotlin.forum.dto.AtualizacaoTopicoForm
 import br.com.apiKotlin.forum.service.TopicoService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -17,13 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.awt.print.Pageable
+
 
 @RestController
 @RequestMapping ("/topicos")
 class TopicoController (private val service: TopicoService){
     @GetMapping
-    fun listar(@RequestParam(required = false) nomeCurso: String?): List<TopicoView> {
-      return service.listar(nomeCurso)
+    fun listar(
+        @RequestParam(required = false) nomeCurso: String?,
+               pagina: Pageable
+        ): Page<TopicoView> {
+      return service.listar(nomeCurso, pagina)
     }
 
     @GetMapping("/{id}")
