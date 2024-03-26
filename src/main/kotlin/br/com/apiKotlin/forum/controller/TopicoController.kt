@@ -3,7 +3,11 @@ package br.com.apiKotlin.forum.controller
 import br.com.apiKotlin.forum.dto.AtualizacaoTopicoForm
 import br.com.apiKotlin.forum.service.TopicoService
 import jakarta.validation.Valid
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -25,9 +29,10 @@ import java.awt.print.Pageable
 @RequestMapping ("/topicos")
 class TopicoController (private val service: TopicoService){
     @GetMapping
+    @Cacheable("Lista de topicos")
     fun listar(
         @RequestParam(required = false) nomeCurso: String?,
-               pagina: Pageable
+               @PageableDefault(size = 5, sort = ["data_criacao"], direction = Sort.Direction.DESC) pagina: Pageable
         ): Page<TopicoView> {
       return service.listar(nomeCurso, pagina)
     }
@@ -39,6 +44,7 @@ class TopicoController (private val service: TopicoService){
 
     @PostMapping
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun cadastrar(
             @RequestBody @Valid form: NovoTopicoForm,
             uriBuilder: UriComponentsBuilder
@@ -50,6 +56,7 @@ class TopicoController (private val service: TopicoService){
 
     @PutMapping
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun atualizar(@RequestBody @Valid form: AtualizacaoTopicoForm): ResponseEntity<TopicoView> {
         val topicoView = service.atualizar(form)
            return ResponseEntity.ok(topicoView)
@@ -58,6 +65,7 @@ class TopicoController (private val service: TopicoService){
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun deletar(@PathVariable id: Long) {
       service.deletar(id)
     }
